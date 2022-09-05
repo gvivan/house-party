@@ -15,6 +15,39 @@ export default class CreateRoomPage extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      canGuestPause: true,
+      votesToSkip: this.default_votes,
+    }
+    this.handleVotesChange = this.handleVotesChange.bind(this);
+    this.handlePauseChange = this.handlePauseChange.bind(this);
+    this.handleCreateRoomButtonPressed = this.handleCreateRoomButtonPressed.bind(this);
+  }
+  
+  handleVotesChange(e) {
+    this.setState({
+      votesToSkip: e.target.value,
+    });
+  }
+
+  handlePauseChange(e) {
+    this.setState({
+      canGuestPause: e.target.value === "true" ? true : false,
+    });
+  }
+
+  handleCreateRoomButtonPressed() {
+    const requestOptions = {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        votes_to_skip: this.state.votesToSkip,
+        can_guest_pause: this.state.canGuestPause
+      })
+    };
+
+    fetch('/api/create-room', requestOptions).then((response) => response.json()).then((data) => console.log(data));
+
   }
 
   render() {
@@ -32,7 +65,7 @@ export default class CreateRoomPage extends Component {
                 Guest Control of Playback State
               </div>
             </FormHelperText>
-            <RadioGroup row defaultValue="true">
+            <RadioGroup row defaultValue="true" onChange={this.handlePauseChange}>
               <FormControlLabel value="true" control={<Radio color="primary" />}
                label="Play/Pause" labelPlacement="bottom" />
                <FormControlLabel value="false" control={<Radio color="secondary" />}
@@ -43,6 +76,7 @@ export default class CreateRoomPage extends Component {
         <Grid item xs={12} align="center">
           <FormControl>
             <TextField required={true} type="number" 
+            onChange={this.handleVotesChange}
             defaultValue={this.default_votes} 
             inputProps={{
               min: 1,
@@ -56,7 +90,7 @@ export default class CreateRoomPage extends Component {
           </FormControl>
         </Grid>
         <Grid item xs={12} align="center">
-          <Button color="primary" variant="contained">
+          <Button color="primary" variant="contained" onClick={this.handleCreateRoomButtonPressed}>
             Create A Room
           </Button>
         </Grid>
