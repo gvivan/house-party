@@ -7,41 +7,47 @@ export default class JoinRoomPage extends Component {
     super(props);
     this.state = {
       roomCode: "",
-      error: ""
-    }
+      error: "",
+    };
     this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
     this.enterRoomButtonPressed = this.enterRoomButtonPressed.bind(this);
   }
 
   render() {
-    return(<Grid container spacing={1}>
-      <Grid item xs={12} align="center">
-        <Typography variant="h4" component="h4">
-          Join a Room
-        </Typography>
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Typography variant="h4" component="h4">
+            Join a Room
+          </Typography>
+        </Grid>
+        <Grid item xs={12} align="center">
+          <TextField
+            error={this.state.error}
+            label="Code"
+            placeholder="Enter a Room Code"
+            value={this.state.roomCode}
+            helperText={this.state.error}
+            variant="outlined"
+            onChange={this.handleTextFieldChange}
+          />
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.enterRoomButtonPressed}
+          >
+            Enter Room
+          </Button>
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button variant="contained" color="secondary" to="/" component={Link}>
+            Back
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item xs={12} align="center">
-        <TextField 
-        error = {this.state.error}
-        label = "Code"
-        placeholder = "Enter a Room Code"
-        value = {this.state.roomCode}
-        helperText = {this.state.error}
-        variant = "outlined"
-        onChange = {this.handleTextFieldChange}
-        />
-      </Grid>
-      <Grid item xs={12} align="center">
-        <Button variant="contained" color="primary" onClick={this.enterRoomButtonPressed}>
-          Enter Room
-        </Button>
-      </Grid>
-      <Grid item xs={12} align="center">
-        <Button variant="contained" color="secondary" to="/" component={Link}>
-          Back
-        </Button>
-      </Grid>
-    </Grid>);
+    );
   }
 
   handleTextFieldChange(e) {
@@ -59,17 +65,18 @@ export default class JoinRoomPage extends Component {
       }),
     };
 
-    fetch("/api/join-room", requestOptions).then((response) => {
-      if (response.ok) {
-        this.props.history.push(`/room/${this.state.roomCode}`);
-      }
-      else {
-        this.setState({
-          error: "Room not found."
-        });
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+    fetch("/api/join-room", requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          this.props.history.push(`/room/${this.state.roomCode}`);
+        } else {
+          this.setState({
+            error: "Room not found.",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
